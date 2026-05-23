@@ -948,12 +948,12 @@ function floatHeart(){
 let heartTimer;
 function startHearts(int){ clearInterval(heartTimer); heartTimer=setInterval(()=>{ if(Math.random()<.7) floatHeart(); }, int); }
 
-function petalBurst(count=26){
+function petalBurst(count=3){
   const tints=['#ffffff','#fbf7ee','#f4efe2','#f8f5ec','rgba(255,255,255,.95)'];
   for(let i=0;i<count;i++){
     setTimeout(()=>{
       const p=document.createElement('div'); p.className='petal feather';
-      const sz=14+Math.random()*22; const c=tints[Math.floor(Math.random()*tints.length)];
+      const sz=16+Math.random()*22; const c=tints[Math.floor(Math.random()*tints.length)];
       p.innerHTML=`<svg width="${sz}" height="${sz*2.6}" viewBox="0 0 24 62" style="filter:drop-shadow(0 2px 4px rgba(0,0,0,.18))">
         <path d="M12 1 C5 9 3 24 5 40 C6 49 9 56 12 61 C15 56 18 49 19 40 C21 24 19 9 12 1Z" fill="${c}" opacity=".95"/>
         <path d="M12 4 L12 58" stroke="rgba(170,160,140,.45)" stroke-width=".9" stroke-linecap="round"/>
@@ -963,18 +963,27 @@ function petalBurst(count=26){
           <path d="M12 38 q4 1 6 3"/><path d="M12 38 q-4 1 -6 3"/>
         </g>
       </svg>`;
-      const x=Math.random()*innerWidth;
-      p.style.left=x+'px'; p.style.top='-60px';
+
+      // wind direction: alternate side-to-side, but mostly one-way per gust
+      const fromLeft = Math.random() < 0.7;
+      const startX = fromLeft ? -80 : innerWidth + 80;
+      const endX   = fromLeft ? innerWidth + 120 : -120;
+      const startY = innerHeight * (0.05 + Math.random()*0.45);
+      const midY   = startY + (Math.random()*120 - 30);
+      const endY   = startY + (innerHeight*0.25 + Math.random()*innerHeight*0.4);
+
+      p.style.left='0'; p.style.top='0';
+      p.style.transform=`translate(${startX}px,${startY}px)`;
       domfx.appendChild(p);
-      // feathers drift slower & wider than petals — wind, not gravity
-      const sway=Math.random()*260-130; const dur=9000+Math.random()*7000;
-      const spin=Math.random()*540-270;
+
+      const dur=8000+Math.random()*5000;
+      const spin=Math.random()*900-450;
       p.animate([
-        {transform:'translateY(0) translateX(0) rotate(0)',opacity:0},
-        {transform:`translateY(${innerHeight*.3}px) translateX(${sway*.6}px) rotate(${spin*.4}deg)`,opacity:.92,offset:.35},
-        {transform:`translateY(${innerHeight+120}px) translateX(${sway}px) rotate(${spin}deg)`,opacity:.6}
-      ],{duration:dur,easing:'cubic-bezier(.35,.05,.55,.95)'}).onfinish=()=>p.remove();
-    }, i*160);
+        {transform:`translate(${startX}px,${startY}px) rotate(0deg)`,opacity:0},
+        {transform:`translate(${(startX+endX)/2}px,${midY}px) rotate(${spin*0.5}deg)`,opacity:.95,offset:.4},
+        {transform:`translate(${endX}px,${endY}px) rotate(${spin}deg)`,opacity:.55}
+      ],{duration:dur,easing:'cubic-bezier(.2,.6,.4,1)'}).onfinish=()=>p.remove();
+    }, i*900);
   }
 }
 let petalLoop;
@@ -1086,8 +1095,8 @@ function ping2(){ const n=Date.now(); if(n-lastPing<55||!actx||muted) return; la
   g.gain.exponentialRampToValueAtTime(.0004,actx.currentTime+.06); o.start(); o.stop(actx.currentTime+.07);
 }
 function endFinale(){
-  petalBurst(30);
-  petalLoop=setInterval(()=>petalBurst(8), 3000);
+  petalBurst(3);
+  petalLoop=setInterval(()=>petalBurst(3), 7000);
   setTimeout(()=>{ $('#finalText').classList.add('show'); }, 1400);
   setTimeout(()=>{ $('#replay').classList.add('show'); }, 4200);
 }
