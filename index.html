@@ -355,13 +355,82 @@ body{
 #veil .start:hover{transform:scale(1.05);box-shadow:0 0 26px rgba(233,201,143,.5);}
 
 @media (max-width:760px){
+  /* atmosphere */
   .window{width:42vw;height:30vh;top:4%;}
-  .open-book{flex-direction:column;height:88vh;}
+
+  /* cover */
+  .book{width:min(80vw,360px);height:min(72vh,520px);}
+  .book .label{padding:22px 14px;}
+  .tap-hint{bottom:-34px;font-size:11px;letter-spacing:1.5px;}
+
+  /* open book — taller, stacked */
+  .open-book{flex-direction:column;width:96vw;height:92vh;}
   .page.left{border-radius:4px 4px 0 0;box-shadow:inset 0 -24px 36px rgba(80,55,30,.25);}
   .page.right{border-radius:0 0 4px 4px;box-shadow:inset 0 24px 36px rgba(80,55,30,.25);}
   .spine-shadow{left:0;right:0;top:50%;bottom:auto;width:auto;height:50px;transform:translateY(-50%);
     background:linear-gradient(180deg,transparent,rgba(60,40,20,.3) 50%,transparent);}
-  .polaroid .photo{width:30vw;height:30vw;}
+
+  /* scrapbook items shrink so they fit smaller pages */
+  .polaroid{padding:8px 8px 34px;}
+  .polaroid .photo{width:30vw;height:30vw;min-width:110px;min-height:110px;max-width:170px;max-height:170px;}
+  .polaroid .cap{font-size:13px;left:6px;right:6px;bottom:8px;}
+
+  .note{padding:12px 14px;max-width:62vw;}
+  .note .ntitle{font-size:16px;}
+  .note .nbody{font-size:13.5px;line-height:1.3;}
+  .note.open .nbody{max-height:340px;}
+
+  .tape{width:64px;height:20px;}
+  .sticker svg{width:36px;height:36px;}
+  .date-stamp{font-size:11px;padding:2px 6px;}
+  .coffee-stain{width:80px;height:80px;}
+
+  /* hover popup → behaves as tap-toggle pill on touch */
+  .hover-cap{font-size:13px;padding:6px 10px;max-width:60vw;}
+  .polaroid.tapped{transform:translateY(-6px) scale(1.03)!important;z-index:30;}
+  .polaroid.tapped .hover-cap{opacity:1;transform:translate(-50%,100%) scale(1);}
+
+  /* navigation — bigger tap targets, lift off bottom edge */
+  .nav{bottom:10px;gap:18px;}
+  .nav button{width:48px;height:48px;font-size:18px;}
+  .dots span{width:10px;height:10px;}
+
+  /* corner peek smaller */
+  .page-corner{width:48px;height:48px;}
+  .page-corner:hover{width:60px;height:60px;}
+
+  /* finale */
+  .folded-note{width:88vw;}
+  .note-flap{padding:26px 20px;max-height:96px;}
+  .letter{font-size:14px;line-height:1.75;min-height:240px;}
+
+  /* sound + replay — out of the thumb-tap zone */
+  #sound{top:12px;right:12px;width:42px;height:42px;}
+  #sound svg{width:20px;height:20px;}
+  .replay{bottom:12px;font-size:11px;padding:8px 14px;}
+}
+
+/* extra-tight phones */
+@media (max-width:380px){
+  .open-book{width:98vw;height:94vh;}
+  .polaroid .photo{width:34vw;height:34vw;}
+  .note{max-width:70vw;}
+  .nav{bottom:8px;}
+}
+
+/* landscape phones — keep book side-by-side, save vertical space */
+@media (max-height:520px) and (orientation:landscape){
+  .open-book{flex-direction:row;height:86vh;}
+  .page.left{border-radius:4px 0 0 4px;}
+  .page.right{border-radius:0 4px 4px 0;}
+  .spine-shadow{left:50%;right:auto;top:0;bottom:0;width:40px;height:auto;transform:translateX(-50%);
+    background:linear-gradient(90deg,transparent,rgba(60,40,20,.32) 50%,transparent);}
+  .polaroid .photo{width:18vw;height:18vw;}
+}
+
+/* respect reduced-motion users (mostly mobile a11y) */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;}
 }
 </style>
 </head>
@@ -487,7 +556,7 @@ const spreads = [
     {t:'polaroid', mood:'dawn',  photo:'https://files.catbox.moe/rrvsrv.jpeg', cap:'the first song you dedicated to me', hover:'Ve Haaniyaan — it still plays in my head.', x:'9%',  y:'12%', r:-5, depth:2.4},
     {t:'tape', x:'13%', y:'9%', r:-6},
     {t:'date', text:'a quiet tuesday', x:'30%', y:'7%', r:5},
-    {t:'note', title:'tiny thing', stamp:'#01', body:'You laughed at your own joke before finishing it. I have replayed that sound a hundred times.', x:'58%', y:'14%', r:3},
+    {t:'note', title:'tiny things', stamp:'#01', body:'first you sent me a song. then a painting. then a page of your handwriting. you were giving me pieces of you to keep — and I don’t think you even knew it.', x:'58%', y:'14%', r:3},
     {t:'polaroid', mood:'sun', photo:'https://i.imgur.com/eLk4OmM.jpeg', cap:'this is when you shared me your first complete painting', hover:'The first time I saw the world through your hands.', x:'62%', y:'46%', r:6, depth:1.8},
     {t:'tape', pink:true, x:'66%', y:'43%', r:8},
     {t:'sticker', svg:'heart', x:'40%', y:'58%', r:-10, depth:3},
@@ -498,7 +567,7 @@ const spreads = [
     {t:'coffee', x:'70%', y:'18%'},
     {t:'polaroid', mood:'rain', photo:'https://i.imgur.com/1bA4OZx.jpeg', cap:'this is when lily bloomed outside of blooming season', hover:'Even the flowers bend the rules for you.', x:'10%', y:'10%', r:4, depth:2.2},
     {t:'tape', x:'13%', y:'7%', r:5},
-    {t:'note', title:'note to self', stamp:'#02', body:'Remember the way the rain sounded that evening. Remember you were not alone for it.', x:'55%', y:'12%', r:-3},
+    {t:'note', title:'note to self', stamp:'#02', body:'a lily bloomed when it wasn’t supposed to. your reflection started showing up in lines I never drew before. coincidences stopped feeling like coincidences.', x:'55%', y:'12%', r:-3},
     {t:'sticker', svg:'star', x:'46%', y:'30%', r:8, depth:3.2},
     {t:'ticket', text:'ADMIT ONE · us', x:'58%', y:'52%', r:-7},
     {t:'polaroid', mood:'night', photo:'https://i.imgur.com/oZog2B3.jpeg', cap:'this is when your reflection started in my work', hover:'You slipped into the lines I draw.', x:'16%', y:'50%', r:-4, depth:1.7},
@@ -510,7 +579,7 @@ const spreads = [
     {t:'tape', x:'16%', y:'10%', r:6},
     {t:'date', text:'monsoon, 2024', x:'33%', y:'9%', r:-5},
     {t:'sticker', svg:'flower', x:'48%', y:'20%', r:-12, depth:3},
-    {t:'note', title:'just because', stamp:'#03', body:'No big reason. Some days just felt lighter because you were in them.', x:'56%', y:'16%', r:4},
+    {t:'note', title:'out in the open', stamp:'#03', body:'the followers noticed. one photo kept being replayed. the chats stretched past midnight. somewhere in there, this stopped being a secret — and I stopped wanting to keep it one.', x:'56%', y:'16%', r:4},
     {t:'polaroid', mood:'coffee', photo:'https://i.imgur.com/wGijDz2.jpeg', cap:'this is when my followers got to know something was cooking', hover:'The secret was out before we said a word.', x:'60%', y:'48%', r:-6, depth:1.9},
     {t:'tape', pink:true, x:'63%', y:'45%', r:7},
     {t:'sticker', svg:'heart', x:'30%', y:'60%', r:6, depth:3.4},
@@ -550,6 +619,13 @@ spreads.forEach((sp, si)=>{
           <div class="cap">${it.cap}</div>
           <div class="hover-cap">${it.hover}</div>
         </div>`;
+      const pol = el.querySelector('.polaroid');
+      pol.addEventListener('click', e=>{
+        e.stopPropagation();
+        const wasTapped = pol.classList.contains('tapped');
+        document.querySelectorAll('.polaroid.tapped').forEach(p=>p.classList.remove('tapped'));
+        if(!wasTapped) pol.classList.add('tapped');
+      });
     } else if(it.t==='note'){
       el.innerHTML=`
         <div class="note">
